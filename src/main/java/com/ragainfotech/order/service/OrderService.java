@@ -22,15 +22,11 @@ public class OrderService {
     RestTemplate restTemplate;
 
     public TransactionResponse saveOrder(TransactionRequest request){
-
         String message="";
-
         Order order = repository.save(request.getOrder());
-
-        Payment payment = request.getPayment();
+        Payment payment = new Payment();
         payment.setOrderId(order.getId());
         payment.setAmount(order.getPrice());
-
         Payment paymentResponse = restTemplate.postForObject("http://PAYMENT-SERVICE/payment/submitPayment", payment, Payment.class);
 
         if(paymentResponse.getPaymentStatus().equalsIgnoreCase("Success")){
